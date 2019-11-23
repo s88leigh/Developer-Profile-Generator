@@ -170,5 +170,34 @@ function generateHTML(data) {
             zoom: .75; 
           } 
          }
-      </style>`
-        }
+      </style>
+      </head>
+      <body>
+          <div class="wrapper">
+            <img src="${data.avatar_url}" alt="image of ${data.name}">
+            <h1>Hi</h1>
+            <h2>My name is ${data.name}!</h2>
+            <h5>Currently @ ${data.company ? data.company : " "} </h5>
+            
+          <nav class="links-nav">
+            ${data.location 
+              ?`<a class='nav-link' target='_blank' href='https://www.google.com/maps/place/${data.location}'>${data.location}</a>`
+            : " "}
+            ${data.html_url
+              ?`<a class='nav-link' target='_blank' href='${data.html_url}'>GitHub</a>`
+            : " "}
+
+            ${data.blog
+              ?`<a class='nav-link' target='_blank' href='${data.blog}'>blog</a>`
+            : " "}
+
+          </nav>
+
+            <p> 
+          
+          </div>
+      </body>
+
+      `
+
+    }
