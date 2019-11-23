@@ -174,6 +174,7 @@ function generateHTML(data) {
       </head>
       <body>
           <div class="wrapper">
+            <div class="photo-header">
             <img src="${data.avatar_url}" alt="image of ${data.name}">
             <h1>Hi</h1>
             <h2>My name is ${data.name}!</h2>
@@ -181,20 +182,32 @@ function generateHTML(data) {
             
           <nav class="links-nav">
             ${data.location 
-              ?`<a class='nav-link' target='_blank' href='https://www.google.com/maps/place/${data.location}'>${data.location}</a>`
+              ?`<a class='nav-link' target='_blank' href='https://www.google.com/maps/place/${data.location}'><i class="fas fa-location-arrow"></i>${data.location}</a>`
             : " "}
             ${data.html_url
-              ?`<a class='nav-link' target='_blank' href='${data.html_url}'>GitHub</a>`
+              ?`<a class='nav-link' target='_blank' href='${data.html_url}'><i class="fab fa-github-alt"></i>GitHub</a>`
             : " "}
 
             ${data.blog
-              ?`<a class='nav-link' target='_blank' href='${data.blog}'>blog</a>`
+              ?`<a class='nav-link' target='_blank' href='${data.blog}'><i class="fas fa-rss"></i>blog</a>`
             : " "}
 
           </nav>
-
-            <p> 
-          
+          </div>
+          <main>
+          <div class="container">
+              <div class="row">
+                <div class="col">
+                  <h3> ${data.bio ? data.bio : ""} </h3>
+                </div>
+              </div>
+            <div class="col">
+                <div class="card">
+                  <h3> ${data.public_repos ? data.public_repos : ""} </h3>
+                  
+      
+            </div>
+          </main>
           </div>
       </body>
 
