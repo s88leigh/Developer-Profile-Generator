@@ -1,25 +1,37 @@
-const fs = require("fs");
-const axios = require("axios");
-const inquirer = require("inquirer");
+const fs = require ("fs");
+const open = require ("open");
+const inquirer = require ("inquirer");
+const axios = require ("axios");
 
-inquirer
-  .prompt({
-    message: "Enter your GitHub username",
-    name: "username"
-  })
-  .then(function ({ username }) {
-    const queryUrl = `https://api.github.com/users/${username}/repos?per_page=100`;
-    axios
-      .get(queryUrl)
-      .then(response => {
-        console.log(response.data);
-        const repoNames = response.data.map(function (repo) {
-          return repo.name;
-        });
 
-        const repoNameStr = repoNames.join('\n');
-        console.log(repoNameStr)
+const questions = [
+    {
+        type: "input",
+        name: "name",
+        message: "What is your Github username?"
+      },
+      {
+        type: "list",
+        name: "color",
+        message: "What is your favorite color?",
+        choices: ["red", "blue", "green", "yellow", "purple"]
+      }
+];
 
-      })
-  });
+function writeToFile(fileName, data) {
+ 
+}
 
+async function init() {
+    
+        const answers = await inquirer.prompt(questions);
+        console.log (answers)
+        if (answers) {
+            axios.get(`https://api.github.com/users/${answers.name}`)
+                .then(results => {
+                    console.log(results.data, 'results')
+                })
+        }
+      
+}
+init();
