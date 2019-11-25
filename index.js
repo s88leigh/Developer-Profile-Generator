@@ -5,6 +5,10 @@ const axios = require("axios");
 const generateHTML = require("./generateHTML")
 const path = require('path');
 const puppeteer = require('puppeteer');
+const util = require("util");
+const writeFileAsync = util.promisify(fs.writeFile);
+
+
 
 const questions = [
   {
@@ -20,9 +24,10 @@ const questions = [
   }
 ];
 
-function writeToFile(fileName, data) {
-
-}
+const compile = async function(filename, data) {
+  const filePath = path.join(process.cwd(),"resume.pdf");
+  const html = await fs.readFile(filePath, 'utf-8');
+};
 
 async function init() {
 
@@ -51,21 +56,21 @@ async function init() {
               stars,
               ...res.data
             })
-          }).then
+          })
+
             (async () => {
               try {
 
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
 
-                await page.setContent('<h1>hello</h1>');
-                await page.emulateMedia('screen');
-
-                // Navigates to the project README file
-                await page.goto(`https://api.github.com/users/${answers.name}/repos`);
+                const content = compile("generateHTML");
+               
+                await page.setContent("content");
+                await page.emulateMedia("screen");
 
                 // Generates a PDF from the page content
-                await page.pdf({ path: 'resume.pdf' });
+                await page.pdf({ path: 'resume.pdf'});
 
                 console.log('done');
                 await browser.close();
@@ -77,7 +82,7 @@ async function init() {
 
             })();
 
-            open(path.join(process.cwd(),"resume.pdf"))
+           
 
           })
       
@@ -85,3 +90,4 @@ async function init() {
   }
 }
 init();
+
