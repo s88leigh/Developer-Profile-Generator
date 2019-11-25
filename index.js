@@ -24,70 +24,52 @@ const questions = [
   }
 ];
 
-const compile = async function(filename, data) {
-  const filePath = path.join(process.cwd(),"resume.pdf");
+const compile = async function (filename, data) {
+  const filePath = path.join(process.cwd(), "resume.pdf");
   const html = await fs.readFile(filePath, 'utf-8');
 };
 
 async function init() {
 
-  const answers = await inquirer.prompt(questions);
-  console.log(answers)
-  if (answers) {
+  try {
+    const answers = await inquirer.prompt(questions);
+    console.log(answers)
+    if (!answers) { throw "No answers provided!" };
 
-    axios.get(`https://api.github.com/users/${answers.name}`)
-      .then(res => {
+    const github = await axios.get(`https://api.github.com/users/${answers.name}`);
+    const githubRepos = await axios.get(`https://api.github.com/users/${answers.name}/repos`)
 
-        //console.log(results.data, 'results')
-        axios.get(`https://api.github.com/users/${answers.name}/repos`)
-          .then(results => {
-            // console.log(results.data, 'repos')
+    const stars = githubRepos.data.reduce((total, current) => {
+      total += current.stargazers_count
+      return total
+    }, 0)
 
-            const stars = results.data.reduce((previous, current) => {
-              previous += current.stargazers_count
-              return previous
-            }, 0)
+    const data = {
+      color: answers.color,
+      stars,
+      ...github.data
+    }
+    const HTML = generateHTML(data)
 
-            console.log(stars)
-            console.log(answers.color)
+    fs.writeFile("index.html", HTML, err => console.log(err));
 
-            return generateHTML({
-              color: answers.color,
-              stars,
-              ...res.data
-            })
-          })
 
-            (async () => {
-              try {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(HTML);
+    // await page.emulateMedia("screen");
 
-                const browser = await puppeteer.launch();
-                const page = await browser.newPage();
+    // Generates a PDF from the page content
+    await page.pdf({ path: 'resume.pdf' });
 
-                const content = compile("generateHTML");
-               
-                await page.setContent("content");
-                await page.emulateMedia("screen");
-
-                // Generates a PDF from the page content
-                await page.pdf({ path: 'resume.pdf'});
-
-                console.log('done');
-                await browser.close();
-                process.exit();
-
-              } catch (e) {
-                console.log('our error', e);
-              }
-
-            })();
-
-           
-
-          })
-      
-
+    console.log('done');
+    await browser.close();
+    process.exit();
+  } catch (error) {
+    console.log(error)
   }
+
 }
+
 init();
 
